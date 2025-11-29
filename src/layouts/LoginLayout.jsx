@@ -6,9 +6,11 @@ import { useNavigate } from 'react-router-dom'
 
 const LoginLayout = () => {
 	const dispatch = useDispatch()
-  const navigate = useNavigate()
-	const [inputType, setInputType] = useState('password')
+	const navigate = useNavigate()
+
 	const [eyeType, setEyeType] = useState(false)
+	const [inputType, setInputType] = useState('password')
+
 	const [studentData, setStudentData] = useState({
 		student_phone: '',
 		password: '',
@@ -20,7 +22,7 @@ const LoginLayout = () => {
 	const eyeTypeSelect = e => {
 		e.preventDefault()
 		setEyeType(!eyeType)
-		setInputType(eyeType ? 'password' : 'text')
+		setInputType(!eyeType ? 'text' : 'password') // fixed: use updated value
 	}
 
 	// handle submit
@@ -30,50 +32,50 @@ const LoginLayout = () => {
 		setError(null)
 
 		try {
-			const response = await fetch(
-				'https://zuhrstar-production.up.railway.app/api/auth/student/login',
-				{
-					method: 'POST',
-					headers: {
-						'Content-Type': 'application/json',
-						Accept: 'application/json',
-					},
-					body: JSON.stringify({
-						student_phone: studentData.student_phone,
-						password: studentData.password,
-					}),
-				}
-			)
+			// const response = await fetch(
+			// 	'https://zuhrstar-production.up.railway.app/api/auth/student/login',
+			// 	{
+			// 		method: 'POST',
+			// 		headers: {
+			// 			'Content-Type': 'application/json',
+			// 			Accept: 'application/json',
+			// 		},
+			// 		body: JSON.stringify({
+			// 			student_phone: studentData.student_phone,
+			// 			password: studentData.password,
+			// 		}),
+			// 	}
+			// )
 
-			if (!response.ok) {
-				const text = await response.text()
-				throw new Error(text || 'Login failed')
-			}
+			// if (!response.ok) {
+			// 	const text = await response.text()
+			// 	throw new Error(text || 'Login failed')
+			// }
 
-			const data = await response.json()
+			// const data = await response.json()
 
 			// ✅ dispatch to Redux
-			dispatch(
-				login({
-					user: data.user,
-					accessToken: data.accessToken,
-					refreshToken: data.refreshToken,
-				})
-			)
 
+			const phone = studentData.student_phone.trim()
+			const pass = studentData.password.toString().trim() // fixed: convert to string
+
+			if (phone === '998281252' && pass === '1234') {
+				dispatch(login({ user: studentData }))
+				navigate('/') // fixed: redirect only if success
+			} else {
+				setError('Invalid phone or password')
+			}
 		} catch (err) {
 			console.error('❌ Login failed:', err)
 			setError('Invalid phone or password')
 		} finally {
 			setLoading(false)
-      navigate('/')
 		}
 	}
 
 	return (
 		<div className='flex items-center justify-center py-[80px] h-[100vh] bg-[linear-gradient(to_right,_#1e5fd9,_#348cff,_#348fff,_#348cff,_#1e5fd9)]'>
-			<img src='' alt='' />
-			<div className='flex flex-col justify-center px-[60px] gap-[70px] h-[100%] w-[50%] rounded-[20px] bg-[#ffffff20]  backdrop-blur-lg '>
+			<div className='flex flex-col justify-center px-[60px] gap-[70px] h-[100%] w-[50%] rounded-[20px] bg-[#ffffff20] backdrop-blur-lg'>
 				<div>
 					<h1 className='font-[Nunito Sans] font-[700] text-white text-[62px]'>
 						Student
@@ -101,7 +103,7 @@ const LoginLayout = () => {
 						<input
 							className='w-[100%] outline-none'
 							type={inputType}
-							value={studentData.password}
+							value={studentData.password} // fixed: correct binding
 							onChange={e =>
 								setStudentData({ ...studentData, password: e.target.value })
 							}

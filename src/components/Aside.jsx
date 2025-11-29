@@ -57,8 +57,11 @@ const Aside = () => {
 					})}
 				</div>
 				<div>
-					<button onClick={() => dispatch(logout())} className='flex items-center gap-[13px] px-[13px] py-[10px] rounded-[8px] rounded-[8px] bg-[red] w-[100%] text-[white] font-[Nunito Sans] font-[600] '>
-						<DoorOpen size={20}/>
+					<button
+						onClick={() => dispatch(logout())}
+						className='flex items-center gap-[13px] px-[13px] py-[10px] rounded-[8px] rounded-[8px] bg-[#ff7575] w-[100%] text-[red] font-[Nunito Sans] font-[600] '
+					>
+						<DoorOpen size={20} />
 						LogOut
 					</button>
 				</div>
