@@ -17,7 +17,7 @@ import { useDispatch } from 'react-redux'
 const Aside = () => {
 	const dispatch = useDispatch()
 	const pages = [
-		{ title: 'Home', path: '/home', icon: Home },
+		{ title: 'Home', path: '/', icon: Home },
 		{ title: 'Lessons', path: '/lessons', icon: BookCheck },
 		{ title: 'Marks', path: '/marks', icon: BookOpenCheck },
 		{ title: 'Ranking', path: '/ranking', icon: Medal },
@@ -59,7 +59,7 @@ const Aside = () => {
 				<div>
 					<button
 						onClick={() => dispatch(logout())}
-						className='flex items-center gap-[13px] px-[13px] py-[10px] rounded-[8px] rounded-[8px] bg-[#ff7575] w-[100%] text-[red] font-[Nunito Sans] font-[600] '
+						className='flex items-center gap-[13px] px-[13px] py-[10px] rounded-[8px] rounded-[8px] bg-[#ff00006c] w-[100%] text-[red] font-[Nunito Sans] font-[600] '
 					>
 						<DoorOpen size={20} />
 						LogOut

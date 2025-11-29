@@ -22,7 +22,7 @@ const routes = createHashRouter([
 				element: <MainLayout />,
 				children: [
 					{
-						path: '/home',
+						path: '/',
 						element: <Home />,
 					},
 					{
