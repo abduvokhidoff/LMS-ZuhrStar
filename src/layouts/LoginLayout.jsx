@@ -30,7 +30,7 @@ const LoginLayout = () => {
 
 		try {
 			const response = await fetch(
-				'https://zuhrstar-production.up.railway.app/api/auth/student/login',
+				'https://zuhr-star-production.up.railway.app/api/auth/student/login',
 				{
 					method: 'POST',
 					headers: {
@@ -43,7 +43,7 @@ const LoginLayout = () => {
 
 			const data = await response.json()
 
-			if (!response.ok || !data.success) {
+			if (!response.ok) {
 				throw new Error(data.message || 'Login failed')
 			}
 
@@ -85,7 +85,7 @@ const LoginLayout = () => {
 								student_phone: e.target.value,
 							})
 						}
-						className='px-[20px] py-[12px] rounded-[12px] outline-none border border-[#d8e0f2]'
+						className='px-[20px] py-[12px] rounded-[12px] outline-none border border-[#d8e0f2] bg-[white]'
 					/>
 
 					{/* Password */}
