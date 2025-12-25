@@ -1,4 +1,4 @@
-import { Eye, EyeClosed, EyeIcon } from 'lucide-react'
+import { EyeClosed, EyeIcon } from 'lucide-react'
 import React, { useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { login } from '../redux/authSlice'
@@ -8,63 +8,55 @@ const LoginLayout = () => {
 	const dispatch = useDispatch()
 	const navigate = useNavigate()
 
-	const [eyeType, setEyeType] = useState(false)
-	const [inputType, setInputType] = useState('password')
+	const [showPassword, setShowPassword] = useState(false)
+	const [loading, setLoading] = useState(false)
+	const [error, setError] = useState(null)
 
 	const [studentData, setStudentData] = useState({
 		student_phone: '',
 		password: '',
 	})
-	const [loading, setLoading] = useState(false)
-	const [error, setError] = useState(null)
 
-	// toggle eye
-	const eyeTypeSelect = e => {
-		e.preventDefault()
-		setEyeType(!eyeType)
-		setInputType(!eyeType ? 'text' : 'password') // fixed: use updated value
+	// 👁 Toggle password visibility
+	const togglePassword = () => {
+		setShowPassword(prev => !prev)
 	}
 
-	// handle submit
+	// 🚀 Handle login
 	const handleSubmit = async e => {
 		e.preventDefault()
 		setLoading(true)
 		setError(null)
 
 		try {
-			// const response = await fetch(
-			// 	'https://zuhrstar-production.up.railway.app/api/auth/student/login',
-			// 	{
-			// 		method: 'POST',
-			// 		headers: {
-			// 			'Content-Type': 'application/json',
-			// 			Accept: 'application/json',
-			// 		},
-			// 		body: JSON.stringify({
-			// 			student_phone: studentData.student_phone,
-			// 			password: studentData.password,
-			// 		}),
-			// 	}
-			// )
+			const response = await fetch(
+				'https://zuhrstar-production.up.railway.app/api/auth/student/login',
+				{
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json',
+						Accept: 'application/json',
+					},
+					body: JSON.stringify(studentData),
+				}
+			)
 
-			// if (!response.ok) {
-			// 	const text = await response.text()
-			// 	throw new Error(text || 'Login failed')
-			// }
+			const data = await response.json()
 
-			// const data = await response.json()
-
-			// ✅ dispatch to Redux
-
-			const phone = studentData.student_phone.trim()
-			const pass = studentData.password.toString().trim() // fixed: convert to string
-
-			if (phone === '998281252' && pass === '1234') {
-				dispatch(login({ user: studentData }))
-				navigate('/') // fixed: redirect only if success
-			} else {
-				setError('Invalid phone or password')
+			if (!response.ok || !data.success) {
+				throw new Error(data.message || 'Login failed')
 			}
+
+			// ✅ IMPORTANT: match authSlice payload
+			dispatch(
+				login({
+					user: data.user,
+					accessToken: data.accessToken,
+					refreshToken: data.refreshToken,
+				})
+			)
+
+			navigate('/')
 		} catch (err) {
 			console.error('❌ Login failed:', err)
 			setError('Invalid phone or password')
@@ -74,44 +66,46 @@ const LoginLayout = () => {
 	}
 
 	return (
-		<div className='flex items-center justify-center py-[80px] h-[100vh] bg-[linear-gradient(to_right,_#1e5fd9,_#348cff,_#348fff,_#348cff,_#1e5fd9)]'>
-			<div className='flex flex-col justify-center px-[60px] gap-[70px] h-[100%] w-[50%] rounded-[20px] bg-[#ffffff20] backdrop-blur-lg'>
-				<div>
-					<h1 className='font-[Nunito Sans] font-[700] text-white text-[62px]'>
-						Student
-					</h1>
-				</div>
+		<div className='flex items-center justify-center h-screen bg-[linear-gradient(to_right,_#1e5fd9,_#348cff,_#348fff,_#348cff,_#1e5fd9)]'>
+			<div className='w-[50%] h-full flex flex-col justify-center gap-[60px] px-[60px] bg-[#ffffff20] backdrop-blur-lg rounded-[20px]'>
+				{/* Title */}
+				<h1 className='text-white text-[62px] font-bold'>Student</h1>
 
-				<form
-					className='w-[100%] flex flex-col gap-[30px]'
-					onSubmit={handleSubmit}
-				>
+				{/* Form */}
+				<form onSubmit={handleSubmit} className='flex flex-col gap-[30px]'>
 					{/* Phone */}
 					<input
-						className='px-[20px] py-[10px] outline-none border bg-[white] border-[#d8e0f2] rounded-[12px]'
 						type='text'
-						value={studentData.student_phone}
-						onChange={e =>
-							setStudentData({ ...studentData, student_phone: e.target.value })
-						}
 						placeholder='Your Phone Number'
 						required
+						value={studentData.student_phone}
+						onChange={e =>
+							setStudentData({
+								...studentData,
+								student_phone: e.target.value,
+							})
+						}
+						className='px-[20px] py-[12px] rounded-[12px] outline-none border border-[#d8e0f2]'
 					/>
 
 					{/* Password */}
-					<div className='px-[20px] py-[10px] bg-[white] border border-[#d8e0f2] rounded-[12px] flex items-center'>
+					<div className='flex items-center px-[20px] py-[12px] bg-white rounded-[12px] border border-[#d8e0f2]'>
 						<input
-							className='w-[100%] outline-none'
-							type={inputType}
-							value={studentData.password} // fixed: correct binding
-							onChange={e =>
-								setStudentData({ ...studentData, password: e.target.value })
-							}
+							type={showPassword ? 'text' : 'password'}
 							placeholder='Your Password'
 							required
+							value={studentData.password}
+							onChange={e =>
+								setStudentData({
+									...studentData,
+									password: e.target.value,
+								})
+							}
+							className='w-full outline-none'
 						/>
-						<button onClick={eyeTypeSelect} type='button'>
-							{eyeType ? (
+
+						<button type='button' onClick={togglePassword}>
+							{showPassword ? (
 								<EyeClosed className='text-[#aab0c0]' />
 							) : (
 								<EyeIcon className='text-[#aab0c0]' />
@@ -119,18 +113,19 @@ const LoginLayout = () => {
 						</button>
 					</div>
 
-					{/* Login button */}
+					{/* Submit */}
 					<button
 						type='submit'
 						disabled={loading}
 						className={`${
 							loading ? 'bg-gray-400' : 'bg-[#123c91]'
-						} py-[10px] rounded-[12px] font-[Nunito Sans] font-[600] text-white text-[18px]`}
+						} text-white py-[12px] rounded-[12px] font-semibold text-[18px]`}
 					>
 						{loading ? 'Logging in...' : 'Log In'}
 					</button>
 
-					{error && <p className='text-red-500 text-sm mt-2'>{error}</p>}
+					{/* Error */}
+					{error && <p className='text-red-500 text-sm'>{error}</p>}
 				</form>
 			</div>
 		</div>
