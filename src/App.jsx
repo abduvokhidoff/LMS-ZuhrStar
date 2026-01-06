@@ -3,6 +3,8 @@ import routes from "./routes/routes"
 
 
 function App() {
+  console.log('🔥 APP.JSX ISHLAYAPTI')
+
 
 
   return (
