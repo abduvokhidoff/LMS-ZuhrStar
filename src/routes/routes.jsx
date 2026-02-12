@@ -7,6 +7,7 @@ import Lessons from "../pages/Lessons";
 import Marks from "../pages/Marks";
 import Ranking from "../pages/Ranking";
 import ExtraLessons from "../pages/ExtraLessons";
+import CoinsHistory from "../pages/CoinsHistory";
 
 
 
@@ -41,6 +42,10 @@ const routes = createHashRouter([
 						path: '/extra-lessons',
 						element: <ExtraLessons />,
 					},
+					{
+						path: '/coins-history',
+						element: <CoinsHistory />
+					}
 				],
 			},
 		],
